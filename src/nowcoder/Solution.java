@@ -1036,4 +1036,141 @@ public class Solution {
         }
         return prices;
     }
+
+    boolean isSymmetricalHelper(TreeNode left, TreeNode right) {
+        if (left == null && right == null) {
+            return true;
+        } else if (left == null || right == null) {
+            return false;
+        } else {
+            if (left.val != right.val) {
+                return false;
+            }
+            return isSymmetricalHelper(left.right, right.left) && isSymmetricalHelper(left.left, right.right);
+        }
+    }
+
+    boolean isSymmetrical(TreeNode pRoot) {
+        if (pRoot == null) {
+            return true;
+        }
+        return isSymmetricalHelper(pRoot.left, pRoot.right);
+    }
+
+    private ArrayList<ArrayList<Integer>> res_1106 = new ArrayList<>();
+
+    public ArrayList<ArrayList<Integer>> FindPath(TreeNode root, int expectNumber) {
+        ArrayList<Integer> list = new ArrayList<>();
+        if (root != null) {
+            list.add(root.val);
+            int sum = root.val;
+            FindPathHelper(root, expectNumber, list, sum);
+        }
+        return res_1106;
+    }
+
+    private void FindPathHelper(TreeNode root, int expectNumber, ArrayList<Integer> list, int sum) {
+        if (root.left == null && root.right == null) {
+            if (sum == expectNumber) {
+                res_1106.add(list);
+            }
+        } else {
+            if (root.right != null) {
+                final ArrayList<Integer> list1 = new ArrayList<>(list);
+                list1.add(root.right.val);
+                FindPathHelper(root.right, expectNumber, list1, sum + root.right.val);
+            }
+            if (root.left != null) {
+                final ArrayList<Integer> list2 = new ArrayList<>(list);
+                list2.add(root.left.val);
+                FindPathHelper(root.left, expectNumber, list2, sum + root.left.val);
+            }
+        }
+    }
+
+    private int getNodes(TreeNode node) {
+        return node == null ? 0 : 1 + getNodes(node.left) + getNodes(node.right);
+    }
+
+    public int KthNode(TreeNode root, int k) {
+        if (root == null) {
+            return -1;
+        }
+        int val = getNodes(root.left);
+        if (val >= k) {
+            return KthNode(root.left, k);
+        } else if (val + 1 == k) {
+            return root.val;
+        } else {
+            k = k - val - 1;
+            return KthNode(root.right, k);
+        }
+    }
+
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        if (postorder.length == 0) {
+            return null;
+        }
+        final int last = postorder.length - 1;
+        TreeNode root = new TreeNode(postorder[last]);
+        int index = -1;
+        int val = postorder[last];
+        for (int i = 0; i < inorder.length; i++) {
+            if (inorder[i] == val) {
+                index = i;
+                break;
+            }
+        }
+        if (index != 0) {
+            // 有左子树
+            root.left = buildTree(Arrays.copyOfRange(inorder, 0, index), Arrays.copyOfRange(postorder, 0, index));
+        }
+        if (index + 1 != inorder.length) {
+            // 有右子树
+            root.right = buildTree(Arrays.copyOfRange(inorder, index + 1, inorder.length), Arrays.copyOfRange(postorder, index, last));
+        }
+        return root;
+    }
+
+    public int[][] levelOrderBottom(TreeNode root) {
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        Stack<ArrayList<Integer>> stack = new Stack<>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            ArrayList<Integer> list = new ArrayList<>();
+            final int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                final TreeNode node = queue.poll();
+                list.add(node.val);
+                if (node.left != null) {
+                    queue.add(node.left);
+                }
+                if (node.right != null) {
+                    queue.add(node.right);
+                }
+            }
+            stack.add(list);
+        }
+        int[][] res = new int[stack.size()][];
+        int index = 0;
+        while (!stack.isEmpty()) {
+            final ArrayList<Integer> list = stack.pop();
+            res[index] = new int[list.size()];
+            for (int i = 0; i < list.size(); i++) {
+                res[index][i] = list.get(i);
+            }
+            index++;
+        }
+        return res;
+    }
+
+    public int countBitDiff(int m, int n) {
+        int c = m ^ n;
+        int count = 0;
+        while (c != 0) {
+            count = count + c & 1;
+            c = c >> 1;
+        }
+        return count;
+    }
 }
