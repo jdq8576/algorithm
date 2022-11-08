@@ -1173,4 +1173,76 @@ public class Solution {
         }
         return count;
     }
+
+    public boolean isUnique(String str) {
+        Set<Character> set = new HashSet<>();
+        for (char c : str.toCharArray()) {
+            if (set.contains(c)) {
+                return false;
+            } else {
+                set.add(c);
+            }
+        }
+        return true;
+    }
+
+    public boolean NimGame(int n) {
+        return n % 4 != 0;
+    }
+
+    private int[][] dir_1108 = new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+
+    public char[][] surroundedArea(char[][] board) {
+        int r = board.length - 1;
+        int c = board[0].length - 1;
+
+        // change A
+        for (int i = 0; i <= c; i++) {
+            if (board[0][i] == 'O') {
+                changeA(i, 0, board);
+            }
+            if (board[r][i] == 'O') {
+                changeA(i, r, board);
+            }
+        }
+        for (int i = 0; i <= r; i++) {
+            if (board[i][0] == 'O') {
+                changeA(0, i, board);
+            }
+            if (board[i][c] == 'O') {
+                changeA(c, i, board);
+            }
+        }
+
+        for (int i = 0; i <= r; i++) {
+            for (int j = 0; j <= c; j++) {
+                if (board[i][j] == 'O') {
+                    board[i][j] = 'X';
+                }
+                if (board[i][j] == 'A') {
+                    board[i][j] = 'O';
+                }
+            }
+        }
+
+        return board;
+    }
+
+    private void changeA(int c, int r, char[][] board) {
+        board[r][c] = 'A';
+        for (int i = 0; i < dir_1108.length; i++) {
+            int cc = c + dir_1108[i][0];
+            int rr = r + dir_1108[i][1];
+            if (cc < 0 || cc >= board[0].length) {
+                continue;
+            }
+            if (rr < 0 || rr >= board.length) {
+                continue;
+            }
+            if (board[rr][cc] == 'A' || board[rr][cc] == 'X') {
+                continue;
+            }
+            changeA(cc, rr, board);
+        }
+    }
 }
