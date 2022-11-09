@@ -1245,4 +1245,77 @@ public class Solution {
             changeA(cc, rr, board);
         }
     }
+
+    public int run(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        int l = run(root.left);
+        int r = run(root.right);
+        if (l == 0 && r == 0) {
+            return 1;
+        } else if (l == 0) {
+            return r + 1;
+        } else if (r == 0) {
+            return l + 1;
+        } else {
+            return l < r ? l + 1 : r + 1;
+        }
+    }
+
+    private int res_1109 = 0;
+
+    public int combination(int[] nums, int target) {
+        process(nums, target);
+        return res_1109;
+    }
+
+    private void process(int[] nums, int reminder) {
+        if (reminder == 0) {
+            res_1109++;
+            return;
+        }
+        if (reminder < 0) {
+            return;
+        }
+        for (int num : nums) {
+            reminder -= num;
+            process(nums, reminder);
+            reminder += num;
+        }
+    }
+
+    private ArrayList<ArrayList> list_1109 = new ArrayList<>();
+
+    private void dfs(int[] arr, ArrayList<Integer> list, int size, int target, int sum, int index) {
+        if (list.size() == size) {
+            if (sum == target) {
+                list_1109.add(new ArrayList(list));
+            }
+            return;
+        }
+        for (int i = index; i < arr.length; i++) {
+            list.add(arr[i]);
+            sum = sum + arr[i];
+            dfs(arr, list, size, target, sum, i + 1);
+            list.remove(list.size() - 1);
+            sum = sum - arr[i];
+        }
+    }
+
+    public int[][] combination(int k, int n) {
+        int[] arr = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
+        ArrayList<Integer> list = new ArrayList<>();
+        dfs(arr, list, k, n, 0, 0);
+        int[][] res = new int[list_1109.size()][];
+        for (int i = 0; i < res.length; i++) {
+            final ArrayList arrayList = list_1109.get(i);
+            res[i] = new int[arrayList.size()];
+            for (int j = 0; j < arrayList.size(); j++) {
+                res[i][j] = (int) arrayList.get(j);
+            }
+        }
+        return res;
+    }
+
 }
