@@ -1318,4 +1318,95 @@ public class Solution {
         return res;
     }
 
+    public int getDis(int[] arr, int n) {
+        int minV = arr[0];
+        int res = 0;
+        for (int i = 1; i < arr.length; i++) {
+            final int gap = arr[i] - minV;
+            if (gap > 0) {
+                res = res > gap ? res : gap;
+            } else {
+                minV = arr[i];
+            }
+        }
+        return res;
+    }
+
+    public int[][] flipChess(int[][] arr, int[][] f) {
+        int[][] dir = new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        int r = arr.length;
+        int c = arr[0].length;
+        int[][] turns = new int[r][c];
+        for (int i = 0; i < f.length; i++)
+            for (int j = 0; j < dir.length; j++) {
+                final int i1 = f[i][0] - 1 + dir[j][0];
+                final int i2 = f[i][1] - 1 + dir[j][1];
+                if (i1 < 0 || i1 >= r) {
+                    continue;
+                }
+                if (i2 < 0 || i2 >= c) {
+                    continue;
+                }
+                turns[i1][i2]++;
+            }
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                if (turns[i][j] % 2 != 0) {
+                    if (arr[i][j] == 1) {
+                        arr[i][j] = 0;
+                    } else {
+                        arr[i][j] = 1;
+                    }
+                }
+            }
+        }
+        return arr;
+    }
+
+    public int maximalRectangle(int[][] matrix) {
+        int n = matrix.length;
+        int m = matrix[0].length;
+        for (int i = 0; i < n; i++) {
+            for (int j = m - 2; j >= 0; j++) {
+                matrix[i][j] = matrix[i][j] == 1 ? matrix[i][j] + matrix[i][j + 1] : 0;
+            }
+        }
+        int maxArea = 0;
+        int j = 0;
+        while (j < m) {
+            int maxHeight = 0;
+            int[] heights = new int[n];
+            for (int k = 0; k < n; k++) {
+                heights[k] = matrix[k][j];
+                maxHeight = Math.max(maxHeight, heights[k]);
+            }
+            if (maxHeight == 0) {
+                j++;
+                continue;
+            }
+            maxArea = Math.max(maxArea, largestRectangleArea(heights));
+            j++;
+        }
+        return maxArea;
+    }
+
+    private int largestRectangleArea(int[] heights) {
+        Stack<Integer> stack = new Stack<>();
+        int maxArea = 0, n = heights.length;
+        for (int i = 0; i < n; i++) {
+            while (!stack.isEmpty() && heights[i] < heights[stack.peek()]) {
+                int h = heights[stack.pop()];
+                int L = stack.isEmpty() ? 0 : stack.peek() + 1;
+                maxArea = Math.max(maxArea, h * (i - L));
+            }
+            stack.push(i);
+        }
+        while (!stack.isEmpty()) {
+            int h = heights[stack.pop()];
+            int L = stack.isEmpty() ? 0 : stack.peek() + 1;
+            maxArea = Math.max(maxArea, h * (n - L));
+        }
+        return maxArea;
+    }
+
 }
