@@ -1409,4 +1409,88 @@ public class Solution {
         return maxArea;
     }
 
+    private int res_1111 = 0;
+
+    public int FindPath1111(TreeNode root, int sum) {
+        ArrayList<Integer> list = new ArrayList<>();
+        if (root == null) {
+            return 0;
+        }
+        list.add(0);
+        findPathHelper(root, sum, list, 0);
+        return res_1111;
+    }
+
+    private void findPathHelper(TreeNode root, int target, List<Integer> list, int sum) {
+        sum += root.val;
+        for (int i = 0; i < list.size(); i++) {
+            if (sum - list.get(i) == target) {
+                res_1111++;
+            }
+        }
+        ArrayList<Integer> list1 = new ArrayList<>(list);
+        list1.add(sum);
+        if (root.left != null) {
+            findPathHelper(root.left, target, list1, sum);
+        }
+        if (root.right != null) {
+            findPathHelper(root.right, target, new ArrayList<>(list1), sum);
+        }
+    }
+
+
+    private int res_1111_v2 = 0;
+
+    private void dfs(TreeNode root, int sum) {
+        if (root == null) {
+            return;
+        }
+        if (sum == root.val) {
+            res_1111_v2++;
+        }
+        dfs(root.left, sum - root.val);
+        dfs(root.right, sum - root.val);
+    }
+
+    public int FindPathV2(TreeNode root, int sum) {
+        if (root == null) {
+            return 0;
+        }
+        dfs(root, sum);
+        FindPathV2(root.left, sum);
+        FindPathV2(root.right, sum);
+        return res_1111_v2;
+    }
+
+    private int binarySearch(List<Integer> list, int target) {
+        // 返回第一个小于等于target的值
+        int ret = -1;
+        int l = 0, r = list.size() - 1;
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            if (list.get(mid) >= target) {
+                ret = mid;
+                r = mid - 1;
+            } else {
+                l = mid + 1;
+            }
+        }
+        return ret;
+    }
+
+    public int LIS(int[] arr) {
+        if (arr.length == 0) {
+            return 0;
+        }
+        List<Integer> list = new ArrayList<>();
+        list.add(arr[0]);
+        for (int i = 1; i < arr.length; i++) {
+            if (arr[i] > list.get(list.size() - 1)) {
+                list.add(arr[i]);
+            }
+            int index = binarySearch(list, arr[i]);
+            list.set(index, arr[i]);
+        }
+        return list.size();
+    }
 }
