@@ -1493,4 +1493,68 @@ public class Solution {
         }
         return list.size();
     }
+
+    public int LCSV2(String s1, String s2) {
+        int m = s1.length() + 1;// 行
+        int n = s2.length() + 1;// 列
+        int[][] dp = new int[m][n];
+        for (int i = 0; i < n; i++) {
+            dp[0][i] = 0;
+        }
+        for (int i = 0; i < m; i++) {
+            dp[i][0] = 0;
+        }
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                if (s1.charAt(i - 1) == s2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                } else {
+                    dp[i][j] = Math.max(dp[i][j - 1], dp[i - 1][j]);
+                }
+            }
+        }
+        return dp[m - 1][n - 1];
+    }
+
+    public int maxArea(int[] height) {
+        if (height.length == 0) {
+            return 0;
+        }
+        int res = 0;
+        int l = 0, r = height.length - 1;
+        int leftH = height[l];
+        int rightH = height[r];
+        while (l < r) {
+            int val = Math.min(leftH, rightH);
+            int temp = val * (r - l);
+            if (temp > res) {
+                res = temp;
+            }
+            if (leftH < rightH) {
+                leftH = height[++l];
+            } else {
+                rightH = height[--r];
+            }
+        }
+        return res;
+    }
+
+    private boolean judgeLeave(TreeNode node) {
+        if (node == null) {
+            return false;
+        }
+        return (node.left == null && node.right == null);
+    }
+
+    public TreeNode pruneLeaves(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+        if (judgeLeave(root.left) || judgeLeave(root.right)) {
+            return null;
+        }
+        root.left = pruneLeaves(root.left);
+        root.right = pruneLeaves(root.right);
+        return root;
+    }
 }
