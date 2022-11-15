@@ -1557,4 +1557,63 @@ public class Solution {
         root.right = pruneLeaves(root.right);
         return root;
     }
+
+    public String compressString(String param) {
+        StringBuilder sb = new StringBuilder();
+        final int len = param.length();
+        int index = 0;
+        while (index < len) {
+            char c = param.charAt(index);
+            index++;
+            int sum = 1;
+            while (index < len) {
+                if (param.charAt(index) == c) {
+                    sum++;
+                } else {
+                    break;
+                }
+                index++;
+            }
+            sb.append(c);
+            sb.append(sum);
+        }
+        return sb.toString();
+    }
+
+    public int lengthOfLongestSubstring(String s) {
+        int res = 1;
+        int[] vis = new int[128];
+        int l = 0, r = 1;
+        vis[s.charAt(l)] = 1;
+        while (r < s.length()) {
+            while (r < s.length() && vis[s.charAt(r)] == 1) {
+                vis[s.charAt(l++)] = 0;
+            }
+            vis[s.charAt(r)] = 1;
+            if (r - l + 1 > res) {
+                res = r - l + 1;
+            }
+            r++;
+        }
+        return res;
+    }
+
+    public int largestRectangleAreaV2(int[] heights) {
+        Stack<Integer> stack = new Stack<>();
+        int maxArea = 0, n = heights.length;
+        for (int i = 0; i < n; i++) {
+            while (!stack.isEmpty() && heights[i] < heights[stack.peek()]) {
+                int h = heights[stack.pop()];
+                int L = stack.isEmpty() ? 0 : stack.peek() + 1;
+                maxArea = Math.max(maxArea, h * (n - L));
+            }
+            stack.push(i);
+        }
+        while (!stack.isEmpty()) {
+            int h = heights[stack.pop()];
+            int L = stack.isEmpty() ? 0 : stack.peek() + 1;
+            maxArea = Math.max(maxArea, h * (n - L));
+        }
+        return maxArea;
+    }
 }
