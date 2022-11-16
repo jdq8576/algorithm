@@ -1616,4 +1616,105 @@ public class Solution {
         }
         return maxArea;
     }
+
+    private ArrayList<String> helper(String start, String des, String mid, int target) {
+        ArrayList<String> list = new ArrayList<>();
+        if (target == 1) {
+            list.add(String.format("move from %s to %s", start, des));
+        } else if (target == 2) {
+            list.add(String.format("move from %s to %s", start, mid));
+            list.add(String.format("move from %s to %s", start, des));
+            list.add(String.format("move from %s to %s", mid, des));
+        } else {
+            ArrayList<String> stringArrayList = helper(start, mid, des, target - 1);
+            stringArrayList.add(String.format("move from %s to %s", start, des));
+            ArrayList<String> stringArrayList1 = helper(mid, des, start, target - 1);
+            stringArrayList1.stream().forEach(str -> stringArrayList.add(str));
+            return stringArrayList;
+        }
+        return list;
+    }
+
+    public ArrayList<String> getSolution(int n) {
+        ArrayList<String> list = helper("left", "mid", "right", n);
+        return list;
+    }
+
+    public String maxLexicographical(String num) {
+        int index = -1;
+        int index2 = -1;
+        for (int i = 0; i < num.length(); i++) {
+            if (num.charAt(i) == '0') {
+                index = i;
+                for (int j = index; j < num.length(); j++) {
+                    if (num.charAt(j) == '0') {
+                        index2 = j;
+                    } else {
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        if (index == -1) {
+            return num;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < num.length(); i++) {
+            if (i < index || i > index2) {
+                sb.append(num.charAt(i));
+            } else {
+                sb.append('1');
+            }
+        }
+        return sb.toString();
+    }
+
+    private Map<TreeNode, Integer> map = new HashMap<>();
+
+    private List<List<TreeNode>> levelOrder(TreeNode root) {
+        List<List<TreeNode>> ans = new ArrayList<>();
+        if (root == null) {
+            return ans;
+        }
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        while (queue.size() != 0) {
+            List<TreeNode> tmp = new ArrayList<>();
+            int index = 0;
+            for (int i = queue.size(); i > 0; i--) {
+                TreeNode cur = queue.poll();
+                index++;
+                if (cur.val == -1) {
+                    continue;
+                }
+                tmp.add(cur);
+                map.put(cur, index - 1);
+                queue.offer(cur.left == null ? new TreeNode(-1) : cur.left);
+                queue.offer(cur.right == null ? new TreeNode(-1) : cur.right);
+                cur.left = null;
+                cur.right = null;
+            }
+            ans.add(tmp);
+        }
+        return ans;
+    }
+
+    public TreeNode cyclicShiftTree(TreeNode root, int k) {
+        List<List<TreeNode>> lists = levelOrder(root);
+        for (int i = lists.size() - 1; i > 0; i--) {
+            List<TreeNode> child = lists.get(i);
+            List<TreeNode> parent = lists.get(i - 1);
+            for (int j = 0; j < child.size(); j++) {
+                TreeNode chi = child.get(j);
+                TreeNode par = parent.get((map.get(chi) + k) % (parent.size() * 2) / 2);
+                if ((map.get(chi) + k) % (parent.size() * 2) % 2 == 0) {
+                    par.left = chi;
+                } else {
+                    par.right = chi;
+                }
+            }
+        }
+        return root;
+    }
 }
