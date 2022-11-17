@@ -1717,4 +1717,113 @@ public class Solution {
         }
         return root;
     }
+
+    public int maxValue(String s, int k) {
+        k = Math.min(s.length(), k);
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i <= s.length() - k; i++) {
+            list.add(s.substring(i, i + k));
+        }
+        Collections.sort(list, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                for (int i = 0; i < o1.length(); i++) {
+                    if (o1.charAt(i) > o2.charAt(i)) {
+                        return -1;
+                    } else if (o1.charAt(i) < o2.charAt(i)) {
+                        return 1;
+                    }
+                }
+                return 0;
+            }
+        });
+        return Integer.valueOf(list.get(0));
+    }
+
+    private int calculateHelper(String s, int start, int des) {
+        Stack<Integer> stack = new Stack<>();
+        boolean flag = true;
+        while (start <= des) {
+            if (s.charAt(start) == '-') {
+                flag = false;
+                start++;
+            } else if (s.charAt(start) == '+') {
+                flag = true;
+                start++;
+            } else if (s.charAt(start) == '(') {
+                int sum = 1;
+                int begin = start + 1;
+                int end = -1;
+                start++;
+                while (start <= des) {
+                    if (s.charAt(start) == '(') {
+                        sum++;
+                    } else if (s.charAt(start) == ')') {
+                        sum--;
+                    }
+                    if (sum == 0) {
+                        end = start - 1;
+                        break;
+                    }
+                    start++;
+                }
+                int val = calculateHelper(s, begin, end);
+                stack.push(val * (flag ? 1 : -1));
+                start++;
+            } else if (s.charAt(start) >= '0' && s.charAt(start) <= '9') {
+                int sum = 0;
+                while (start <= des) {
+                    if (s.charAt(start) >= '0' && s.charAt(start) <= '9') {
+                        sum = sum * 10 + s.charAt(start) - 48;
+                    } else {
+                        break;
+                    }
+                    start++;
+                }
+                stack.push(sum * (flag ? 1 : -1));
+            }
+        }
+        int res = 0;
+        while (!stack.isEmpty()) {
+            res = res + stack.pop();
+        }
+        return res;
+    }
+
+    public int calculate(String s) {
+        return calculateHelper(s, 0, s.length() - 1);
+    }
+
+    public int FillArray(int[] a, int k) {
+        int len = a.length;
+        long[][] dp = new long[len + 1][k + 1];
+        final int MOD = 1000000007;
+        for (int j = 1; j <= k; j++) {
+            dp[1][j] = j;
+        }
+        for (int i = 2; i <= len; i++) {
+            for (int j = 1; j <= k; j++) {
+                dp[i][j] = (dp[i][j - 1] + dp[i - 1][j]) % MOD;
+            }
+        }
+        int i = 0;
+        int ans = 1;
+        while (i < len) {
+            while (i < len && a[i] != 0) {
+                i++;
+            }
+            if (i == len) {
+                break;
+            }
+            int start = i;
+            int low = (i > 0 ? a[i - 1] : 1);
+            while (i < len && a[i] == 0) {
+                i++;
+            }
+            int end = i;
+            int high = (i < len ? a[i] : k);
+            ans = (int) ((ans * dp[end - start][high - low + 1]) % MOD);
+        }
+        return ans;
+    }
 }
