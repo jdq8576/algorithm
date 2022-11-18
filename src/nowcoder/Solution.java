@@ -1826,4 +1826,130 @@ public class Solution {
         }
         return ans;
     }
+
+    public int calculateSimple(String s) {
+        /**
+         * 1 +
+         * 2 -
+         * 3 *
+         * 4 /
+         */
+        int flag = 1;
+        Stack<Integer> stack = new Stack<>();
+        int index = 0;
+        while (index < s.length()) {
+            if (s.charAt(index) == '+') {
+                flag = 1;
+                index++;
+            } else if (s.charAt(index) == '-') {
+                flag = 2;
+                index++;
+            } else if (s.charAt(index) == '*') {
+                flag = 3;
+                index++;
+            } else if (s.charAt(index) == '/') {
+                flag = 4;
+                index++;
+            } else {
+                int sum = 0;
+                while (index < s.length()) {
+                    if (s.charAt(index) >= '0' && s.charAt(index) <= '9') {
+                        sum = sum * 10 + s.charAt(index) - 48;
+                        index++;
+                    } else {
+                        break;
+                    }
+                }
+                switch (flag) {
+                    case 1:
+                        stack.push(sum);
+                        break;
+                    case 2:
+                        stack.push(sum * -1);
+                        break;
+                    case 3:
+                        int val = stack.pop();
+                        stack.push(val * sum);
+                        break;
+                    case 4:
+                        val = stack.pop();
+                        stack.push(val / sum);
+                        break;
+                }
+            }
+        }
+        int res = 0;
+        while (!stack.isEmpty()) {
+            res = res + stack.pop();
+        }
+        return res;
+    }
+
+    private boolean dfs(String[] board, String word, int[][] vis, int index, int r, int c) {
+        int[][] dirs = new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        if (index == word.length()) {
+            return true;
+        }
+        for (int i = 0; i < dirs.length; i++) {
+            int rr = r + dirs[i][0];
+            int cc = c + dirs[i][1];
+            if (rr < 0 || rr >= board.length || cc < 0 || cc >= board[0].length()) {
+                continue;
+            }
+            if (vis[rr][cc] == 0 && board[rr].charAt(cc) == word.charAt(index)) {
+                vis[rr][cc] = 1;
+                if (dfs(board, word, vis, index + 1, rr, cc))
+                    return true;
+                vis[rr][cc] = 0;
+            }
+        }
+        return false;
+    }
+
+    public boolean exist(String[] board, String word) {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length(); j++) {
+                if (board[i].charAt(j) == word.charAt(0)) {
+                    int[][] vis = new int[board.length][board[0].length()];
+                    vis[i][j] = 1;
+                    if (dfs(board, word, vis, 1, i, j)) {
+                        return true;
+                    }
+                }
+
+            }
+        }
+        return false;
+    }
+
+    public boolean isValidString(String s) {
+        LinkedList<Integer> left = new LinkedList<>();
+        LinkedList<Integer> star = new LinkedList<>();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '(') {
+                left.push(i);
+            } else if (c == '*') {
+                star.push(i);
+            } else {
+                if (!left.isEmpty()) {
+                    left.pop();
+                } else if (!star.isEmpty()) {
+                    star.pop();
+                } else {
+                    return false;
+                }
+            }
+        }
+        while (!left.isEmpty() && !star.isEmpty()) {
+            int top1 = left.pop();
+            int top2 = star.pop();
+            if (top1 > top2) {
+                return false;
+            }
+        }
+        return left.isEmpty();
+    }
+
+
 }
