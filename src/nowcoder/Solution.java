@@ -1951,5 +1951,89 @@ public class Solution {
         return left.isEmpty();
     }
 
+    public ListNode insertionSortList(ListNode head) {
+        ListNode dummy = new ListNode(-1);
+        dummy.next = head;
+        ListNode next = head.next;
+        head.next = null;
+        while (next != null) {
+            ListNode temp = next.next;
+            next.next = null;
+            ListNode node = dummy;
+            while (node.next != null) {
+                if (node.next.val >= next.val) {
+                    // 插入值
+                    next.next = node.next;
+                    node.next = next;
+                    break;
+                }
+                node = node.next;
+            }
+            if (node.next == null) {
+                node.next = next;
+            }
+            next = temp;
+        }
+        return dummy.next;
+    }
 
+    public int findTargetSumWays(int[] nums, int target) {
+        if (nums.length == 0) {
+            return 0;
+        }
+        if (nums.length == 1) {
+            if (target == nums[0] && target == (nums[0] * -1)) {
+                return 2;
+            } else if (target == nums[0] || target == (nums[0] * -1)) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+        int len = nums.length;
+        return findTargetSumWays(Arrays.copyOfRange(nums, 1, len), target + nums[0]) + findTargetSumWays(Arrays.copyOfRange(nums, 1, len), target - nums[0]);
+    }
+
+    public int findTargetSumWaysV2(int[] nums, int target) {
+        final int n = nums.length;
+        if (n == 0) {
+            return 0;
+        }
+        int sum = 0;
+        sum = Arrays.stream(nums).sum();
+        int v = (sum + target) / 2;
+        if ((sum + target) % 2 == 1) {
+            return 0;
+        }
+        int[][] dp = new int[n + 1][v + 1];
+        dp[0][0] = 1;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j <= v; j++) {
+                dp[i + 1][j] = dp[i][j];
+                if (j >= nums[i]) {
+                    dp[i + 1][j] = dp[i + 1][j] + dp[i][j - nums[i]];
+                }
+            }
+        }
+        return dp[n][v];
+    }
+
+    HashMap<TreeNode, Integer> mp1_20221118 = new HashMap();
+    HashMap<TreeNode, Integer> mp2_20221118 = new HashMap();
+
+    public int rob(TreeNode root) {
+        mp1_20221118.put(null, 0);
+        mp2_20221118.put(null, 0);
+        f(root);//递归
+        return Math.max(mp1_20221118.get(root), mp2_20221118.get(root));//返回最大值
+    }
+
+    void f(TreeNode root) {//递归
+        if (root == null)
+            return;
+        f(root.left);//左递归
+        f(root.right);//右递归
+        mp1_20221118.put(root, root.val + mp2_20221118.get(root.left) + mp2_20221118.get(root.right));
+        mp2_20221118.put(root, Math.max(mp1_20221118.get(root.left), mp2_20221118.get(root.left)) + Math.max(mp1_20221118.get(root.right), mp2_20221118.get(root.right)));//当前节点不偷
+    }
 }
