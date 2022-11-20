@@ -2036,4 +2036,75 @@ public class Solution {
         mp1_20221118.put(root, root.val + mp2_20221118.get(root.left) + mp2_20221118.get(root.right));
         mp2_20221118.put(root, Math.max(mp1_20221118.get(root.left), mp2_20221118.get(root.left)) + Math.max(mp1_20221118.get(root.right), mp2_20221118.get(root.right)));//当前节点不偷
     }
+
+    public int[][] generate(int num) {
+        if (num == 1) {
+            return new int[][]{{1}};
+        } else if (num == 2) {
+            return new int[][]{{1}, {1, 1}};
+        } else {
+            int[][] res = new int[num][];
+            res[0] = new int[]{1};
+            res[1] = new int[]{1, 1};
+            for (int i = 2; i < num; i++) {
+                res[i] = new int[i + 1];
+                res[i][0] = 1;
+                res[i][i] = 1;
+                for (int j = 1; j < i; j++) {
+                    res[i][j] = res[i - 1][j] + res[i - 1][j - 1];
+                }
+            }
+            return res;
+        }
+    }
+
+    public int[] plusOne(int[] nums) {
+        int len = nums.length;
+        int[] res = new int[len + 1];
+        int plus = 1;
+        for (int i = len; i >= 1; i--) {
+            res[i] = nums[i - 1] + plus;
+            plus = (res[i] / 10);
+            res[i] = res[i] % 10;
+        }
+        res[0] = plus;
+        if (res[0] != 0) {
+            return res;
+        } else {
+            return Arrays.copyOfRange(res, 1, res.length);
+        }
+    }
+
+    public int numKLenSubstrRepeats(String s, int k) {
+        int[] count = new int[128];
+        if (k >= s.length()) {
+            for (int i = 0; i < s.length(); i++) {
+                if (count[s.charAt(i)] == 1) {
+                    return 1;
+                }
+                count[s.charAt(i)]++;
+            }
+            return 0;
+        } else {
+            int ans = 0;
+            for (int i = 0; i < k; i++) {
+                count[s.charAt(i)]++;
+                if (count[s.charAt(i)] == 2 && ans == 0) {
+                    ans++;
+                }
+            }
+            for (int i = k; i < s.length(); i++) {
+                count[s.charAt(i - k)]--;
+                count[s.charAt(i)]++;
+                for (int j = 'a'; j < 'z'; j++) {
+                    if (count[j] >= 2) {
+                        ans++;
+                        break;
+                    }
+                }
+            }
+            return ans;
+        }
+    }
+
 }
