@@ -2107,4 +2107,72 @@ public class Solution {
         }
     }
 
+    public int longestCommonSubarry(int[] A, int[] B) {
+        int res = 0;
+        int n = A.length, m = B.length;
+        int[][] dp = new int[n + 1][m + 1];
+        for (int i = 0; i < A.length; i++) {
+            for (int j = 0; j < B.length; j++) {
+                if (A[i] == B[j]) {
+                    dp[i + 1][j + 1] = dp[i][j] + 1;
+                } else {
+                    dp[i + 1][j + 1] = 0;
+                }
+                res = Math.max(res, dp[i + 1][j + 1]);
+            }
+        }
+        return res;
+    }
+
+    public boolean wordDiv(String s, String[] dic) {
+        HashSet<String> wordDic = new HashSet<>();
+        Arrays.stream(dic).forEach(str -> wordDic.add(str));
+        boolean[] dp = new boolean[s.length() + 1];
+        dp[0] = true;
+        for (int end = 1; end <= s.length(); end++) {
+            for (int start = 0; start < end; start++) {
+                if (dp[start] && wordDic.contains(s.substring(start, end))) {
+                    dp[end] = true;
+                }
+            }
+        }
+        return dp[s.length()];
+    }
+
+    private void dfs(String s, int index, String[] dic, ArrayList<ArrayList<String>> arrayLists, ArrayList<String> list) {
+        if (index == s.length()) {
+            arrayLists.add(new ArrayList<>(list));
+        } else {
+            for (String s1 : dic) {
+                if (s.substring(index).startsWith(s1)) {
+                    list.add(s1);
+                    dfs(s, index + s1.length(), dic, arrayLists, list);
+                    list.remove(list.size() - 1);
+                }
+            }
+        }
+    }
+
+    public String[] wordDiv2(String s, String[] dic) {
+        ArrayList<ArrayList<String>> arrayLists = new ArrayList<>();
+        ArrayList<String> list = new ArrayList<>();
+        HashSet<String> set = new HashSet<>();
+        int index = 0;
+        dfs(s, 0, dic, arrayLists, list);
+        for (ArrayList<String> arrayList : arrayLists) {
+            StringBuilder sb = new StringBuilder();
+            arrayList.stream().forEach(str -> sb.append(str + " "));
+            sb.deleteCharAt(sb.length() - 1);
+            set.add(sb.toString());
+        }
+        String[] strings = new String[set.size()];
+        for (String s1 : set) {
+            strings[index++] = s1;
+        }
+        return strings;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new Solution().wordDiv2("nowcoder", new String[]{"now", "coder", "no", "wcoder"}));
+    }
 }
