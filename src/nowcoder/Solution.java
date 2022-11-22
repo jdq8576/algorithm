@@ -2172,7 +2172,69 @@ public class Solution {
         return strings;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new Solution().wordDiv2("nowcoder", new String[]{"now", "coder", "no", "wcoder"}));
+    private void postOrder(ArrayList<Integer> list, TreeNode node) {
+        if (node != null) {
+            postOrder(list, node.left);
+            list.add(node.val);
+            postOrder(list, node.right);
+        }
+    }
+
+    public boolean isValidBST(TreeNode root) {
+        ArrayList<Integer> list = new ArrayList<>();
+        postOrder(list, root);
+        if (list.size() == 0) {
+            return true;
+        } else {
+            for (int i = 1; i < list.size(); i++) {
+                if (list.get(i) <= list.get(i - 1)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    private int dfs(int[][] grid, int i, int j, int r, int c) {
+        if (i < 0 || i >= r || j < 0 || j >= c) {
+            return 0;
+        }
+        if (grid[i][j] == 0) {
+            return 0;
+        } else {
+            grid[i][j] = 0;
+            return 1 + dfs(grid, i + 1, j, r, c)
+                    + dfs(grid, i - 1, j, r, c)
+                    + dfs(grid, i, j + 1, r, c)
+                    + dfs(grid, i, j - 1, r, c);
+        }
+    }
+
+    public int maxAreaIsland(int[][] grid) {
+        if (grid == null || grid.length == 0 || grid[0].length == 0) {
+            return 0;
+        }
+        int res = 0;
+        int r = grid.length, c = grid[0].length;
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                if (grid[i][j] == 1) {
+                    res = Math.max(res, dfs(grid, i, j, r, c));
+                }
+            }
+        }
+        return res;
+    }
+
+    public String minString(String[] strs) {
+        StringBuilder sb = new StringBuilder();
+        Arrays.sort(strs, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return (o1 + o2).compareTo(o2 + o1);
+            }
+        });
+        Arrays.stream(strs).forEach(s -> sb.append(s));
+        return sb.toString();
     }
 }
