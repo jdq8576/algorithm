@@ -2237,4 +2237,105 @@ public class Solution {
         Arrays.stream(strs).forEach(s -> sb.append(s));
         return sb.toString();
     }
+
+    public ListNode swapLinkedPair(ListNode head) {
+        ListNode dummy = new ListNode(-1);
+        ListNode tail = dummy;
+        ListNode node = head;
+        while (node != null && node.next != null) {
+            ListNode temp = node.next.next;
+            node.next.next = node;
+            tail.next = node.next;
+            node.next = null;
+            while (tail.next != null) {
+                tail = tail.next;
+            }
+            node = temp;
+        }
+        tail.next = node;
+        return dummy.next;
+    }
+
+    public String binaryAdd(String A, String B) {
+        final String a = new StringBuilder(A).reverse().toString();
+        final String b = new StringBuilder(B).reverse().toString();
+        StringBuilder sb = new StringBuilder();
+        int carry = 0;
+        for (int i = 0; i < a.length() || i < b.length(); i++) {
+            int c1 = 0, c2 = 0;
+            if (i < a.length()) {
+                c1 = a.charAt(i) - 48;
+            }
+            if (i < b.length()) {
+                c2 = b.charAt(i) - 48;
+            }
+            int t = c1 + c2 + carry;
+            carry = t / 2;
+            t = t % 2;
+            sb.append(t);
+        }
+        if (carry != 0) {
+            sb.append(carry);
+        }
+        return sb.reverse().toString();
+    }
+
+    private int vis[][] = new int[101][101];
+
+    private int dfs(String s, int index, int count) {
+        if (count == 0) {
+            return 0;
+        }
+        if (index == s.length()) {
+            return Integer.MAX_VALUE;
+        }
+        if (vis[index][count] > 0) {
+            return vis[index][count];
+        }
+        int min = Integer.MAX_VALUE;
+        boolean[] used = new boolean[26];
+        for (int i = index; i < s.length(); i++) {
+            if (used[s.charAt(i) - 'a']) {
+                continue;
+            }
+            if (index > 0 && s.charAt(i) == s.charAt(index - 1)) {
+                continue;
+            }
+            int leftCount = 0;
+            for (int j = i; j < s.length(); j++) {
+                if (s.charAt(i) != s.charAt(j)) {
+                    continue;
+                }
+                leftCount++;
+                if (count - leftCount < 0) {
+                    break;
+                }
+                int left = getLength(leftCount);
+                int right = dfs(s, j + 1, count - leftCount);
+                if (right == Integer.MAX_VALUE) {
+                    continue;
+                }
+                int length = left + right;
+                min = Math.min(min, length);
+            }
+        }
+        vis[index][count] = min;
+        return min;
+    }
+
+    private int getLength(int num) {
+        if (num == 1) {
+            return 1;
+        }
+        int ret = 1;
+        while (num > 0) {
+            ret++;
+            num = num / 10;
+        }
+        return ret;
+    }
+
+    public int compressString(String s, int k) {
+        return dfs(s, 0, s.length() - k);
+    }
 }
