@@ -2338,4 +2338,70 @@ public class Solution {
     public int compressString(String s, int k) {
         return dfs(s, 0, s.length() - k);
     }
+
+    public ListNode plusOne(ListNode head) {
+        LinkedList<Integer> stack = new LinkedList<>();
+        int carry = 0;
+        ListNode dummy = new ListNode(-1);
+        while (head != null) {
+            stack.push(head.val);
+            head = head.next;
+        }
+        while (!stack.isEmpty()) {
+            int val = stack.pop() + carry;
+            carry = val / 10;
+            val = val % 10;
+            ListNode temp = new ListNode(val);
+            temp.next = dummy.next;
+            dummy.next = temp;
+        }
+        if (carry != 0) {
+            ListNode temp = new ListNode(carry);
+            temp.next = dummy.next;
+            dummy.next = temp;
+        }
+        return dummy.next;
+    }
+
+    private void postOrder(List<Integer> list, TreeNode root) {
+        if (root != null) {
+            postOrder(list, root.left);
+            postOrder(list, root.right);
+            list.add(root.val);
+        }
+    }
+
+    public int[] postorderTraversal(TreeNode root) {
+        List<Integer> list = new ArrayList<>();
+        postOrder(list, root);
+        int[] res = new int[list.size()];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = list.get(i);
+        }
+        return res;
+    }
+
+    public String[] generatePermutation(String s) {
+        ArrayList<String> list = new ArrayList<>();
+        Set<String> set = new HashSet<>();
+        list.add("");
+        for (char c : s.toCharArray()) {
+            int size = list.size();
+            for (int i = 0; i < size; i++) {
+                final String append = new StringBuilder(list.get(i)).append(c).toString();
+                list.add(append);
+            }
+        }
+        for (String s1 : list) {
+            set.add(s1);
+        }
+        String[] res = new String[set.size()];
+        System.out.println(res.length);
+        int index = 0;
+        for (String s1 : set) {
+            res[index++] = s1;
+        }
+        return res;
+    }
+
 }
