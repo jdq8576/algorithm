@@ -2404,4 +2404,81 @@ public class Solution {
         return res;
     }
 
+    private void preOrder(List<Integer> list, TreeNode node) {
+        if (node != null) {
+            list.add(node.val);
+            preOrder(list, node.left);
+            preOrder(list, node.right);
+        }
+    }
+
+    public int[] preorderTraversal(TreeNode root) {
+        List<Integer> list = new ArrayList<>();
+        preOrder(list, root);
+        int[] res = new int[list.size()];
+        int index = 0;
+        for (Integer integer : list) {
+            res[index++] = integer;
+        }
+        return res;
+    }
+
+    private int getHeight(TreeNode node) {
+        if (node == null) {
+            return 0;
+        } else {
+            return 1 + Math.max(getHeight(node.left), getHeight(node.right));
+        }
+    }
+
+    public int diameterOfBinaryTree(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        int res = getHeight(root.left) + getHeight(root.right) + 1;
+        System.out.printf("res = %d\n", res);
+        int r = diameterOfBinaryTree(root.right);
+        System.out.printf("r = %d\n", r);
+        int l = diameterOfBinaryTree(root.left);
+        System.out.printf("l = %d\n", l);
+        if (l < r) {
+            l = r;
+        }
+        return Math.max(res, l);
+    }
+
+    private void swap(int[] nums, int idx, int end) {
+        int sum = nums[idx] + nums[end];
+        nums[idx] = sum - nums[idx];
+        nums[end] = sum - nums[end];
+    }
+
+    public int[] nextPermutation(int[] nums) {
+        int idx = -1, n = nums.length, val = Integer.MAX_VALUE, end = -1;
+
+        for (int i = n - 2; i >= 0; i--) {
+            if (nums[i] < nums[i + 1]) {
+                idx = i;
+                break;
+            }
+        }
+        if (idx != -1) {
+            for (int i = n - 1; i > idx; i--) {
+                if (nums[i] > nums[idx]) {
+                    end = i;
+                    break;
+                }
+            }
+            swap(nums, idx, end);
+        }
+        int l = idx + 1, r = n - 1;
+        while (l < r) {
+            swap(nums, l, r);
+            l++;
+            r--;
+        }
+        return nums;
+    }
+
+
 }
