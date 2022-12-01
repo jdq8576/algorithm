@@ -2480,5 +2480,54 @@ public class Solution {
         return nums;
     }
 
+    public int search(int[] nums, int target) {
+        int l = 0, r = nums.length - 1;
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            if (nums[mid] == target) {
+                return mid;
+            } else if (nums[mid] > target) {
+                r = mid - 1;
+            } else {
+                l = mid + 1;
+            }
+        }
+        return -1;
+    }
 
+    public boolean canJump(int[] nums) {
+        int reach = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (reach < i) {
+                return false;
+            }
+            if (reach >= nums.length - 1) {
+                return true;
+            }
+            reach = Math.max(reach, i + nums[i]);
+        }
+        return true;
+    }
+
+    public int editDistance(String str1, String str2) {
+        int n1 = str1.length();
+        int n2 = str2.length();
+        int[][] dp = new int[n1 + 1][n2 + 1];
+        for (int i = 1; i <= n1; i++) {
+            dp[i][0] = dp[i - 1][0] + 1;// 插入操作
+        }
+        for (int i = 1; i <= n2; i++) {
+            dp[0][i] = dp[0][i - 1] + 1;
+        }
+        for (int i = 1; i <= n1; i++) {
+            for (int j = 1; j <= n2; j++) {
+                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.min(dp[i - 1][j - 1], Math.min(dp[i][j - 1], dp[i - 1][j])) + 1;
+                }
+            }
+        }
+        return dp[n1][n2];
+    }
 }
