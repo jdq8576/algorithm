@@ -2530,4 +2530,97 @@ public class Solution {
         }
         return dp[n1][n2];
     }
+
+    private void inOrder(ArrayList<Integer> list, TreeNode node) {
+        if (node != null) {
+            inOrder(list, node.left);
+            list.add(node.val);
+            inOrder(list, node.right);
+        }
+    }
+
+    public int[] inorderTraversal(TreeNode root) {
+        ArrayList<Integer> list = new ArrayList<>();
+        inOrder(list, root);
+        int[] res = new int[list.size()];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = list.get(i);
+        }
+        return res;
+    }
+
+    public boolean isCompleteTree(TreeNode root) {
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.add(root);
+        int base = 0;
+        while (!queue.isEmpty()) {
+            boolean hasFind = false;
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                TreeNode node = queue.poll();
+                if (node.left != null) {
+                    if (hasFind) {
+                        return false;
+                    }
+                    queue.add(node.left);
+                } else {
+                    hasFind = true;
+                }
+                if (node.right != null) {
+                    if (hasFind) {
+                        return false;
+                    }
+                    queue.add(node.right);
+                } else {
+                    hasFind = true;
+                }
+            }
+            if (size != Math.pow(2, base)) {
+                break;
+            }
+            base++;
+        }
+        return queue.isEmpty();
+    }
+
+    public String decodeString(String s) {
+        StringBuilder stringBuilder = new StringBuilder();
+        int index = 0;
+        int pre = 0;
+        while (index < s.length()) {
+            if (s.charAt(index) == '[') {
+                int count = 1;
+                index++;
+                int start = index, end = -1;
+                while (count >= 1) {
+                    if (s.charAt(index) == '[') {
+                        count++;
+                    } else if (s.charAt(index) == ']') {
+                        count--;
+                    }
+                    index++;
+                }
+                end = index - 1;
+                final String s1 = decodeString(s.substring(start, end));
+                for (int i = 0; i < pre; i++) {
+                    stringBuilder.append(s1);
+                }
+            } else if (Character.isDigit(s.charAt(index))) {
+                int sum = 0;
+                while (index < s.length()) {
+                    if (Character.isDigit(s.charAt(index))) {
+                        sum = sum * 10 + s.charAt(index) - 48;
+                        index++;
+                    } else {
+                        pre = sum;
+                        break;
+                    }
+                }
+            } else {
+                stringBuilder.append(s.charAt(index));
+                index++;
+            }
+        }
+        return stringBuilder.toString();
+    }
 }
