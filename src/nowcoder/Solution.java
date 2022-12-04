@@ -2623,4 +2623,72 @@ public class Solution {
         }
         return stringBuilder.toString();
     }
+
+    public int minSubarray(int[] nums, int target) {
+        int l = 0, r = 0, sum = 0, ret = Integer.MAX_VALUE;
+        while (r < nums.length) {
+            sum = sum + nums[r];
+            while (sum - nums[l] >= target) {
+                sum = sum - nums[l++];
+            }
+            if (sum >= target) {
+                ret = Math.min(ret, r - l + 1);
+            }
+            r++;
+        }
+        return ret;
+    }
+
+    public int[] moveZeroes(int[] nums) {
+        int index = 0;
+        for (int num : nums) {
+            if (num != 0) {
+                nums[index++] = num;
+            }
+        }
+        while (index < nums.length) {
+            nums[index++] = 0;
+        }
+        return nums;
+    }
+
+    public int[] diagonalOrder(int[][] mat) {
+        if (mat.length == 0) {
+            return new int[0];
+        }
+        int n = mat.length, m = mat[0].length;
+        int[] res = new int[n * m];
+        ArrayList<Integer> arrayList = new ArrayList<>();
+        int k = 0;
+        int flag = 1;
+        int i = 0;
+        for (; i < n; i++) {
+            flag = -flag;
+            for (int j = 0; j < m && j <= i; j++) {
+                arrayList.add(mat[i - j][j]);
+            }
+            if (flag == 1) {
+                Collections.reverse(arrayList);
+            }
+            for (int j = 0; j < arrayList.size(); j++) {
+                res[k++] = arrayList.get(j);
+            }
+            arrayList.clear();
+        }
+        int temp = 0;
+        for (; i < n + m - 1; i++) {
+            flag = -flag;
+            for (int j = ++temp; j < temp + n && j < m; j++) {
+                arrayList.add(mat[i - j][j]);
+            }
+            if (flag == 1) {
+                Collections.reverse(arrayList);
+            }
+            for (int j = 0; j < arrayList.size(); j++) {
+                res[k++] = arrayList.get(j);
+            }
+            arrayList.clear();
+        }
+        return res;
+    }
 }
