@@ -2691,4 +2691,51 @@ public class Solution {
         }
         return res;
     }
+
+    public int change(int target, int[] nums) {
+        int[] dp = new int[target + 1];
+        dp[0] = 1;
+        for (int num : nums) {
+            for (int i = num; i <= target; i++) {
+                dp[i] = dp[i - num] + dp[i];
+            }
+        }
+        return dp[target];
+    }
+
+    public int minmumNumberOfHost(int n, int[][] startEnd) {
+        Arrays.sort(startEnd, (a, b) -> a[0] <= b[0] ? -1 : 1);
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+        for (int[] interval : startEnd) {
+            if (!minHeap.isEmpty() && interval[0] >= minHeap.peek()) {
+                minHeap.poll();
+            }
+            minHeap.offer(interval[1]);
+        }
+        return minHeap.size();
+    }
+
+    private int res_1209 = 0;
+
+    Map<Integer, Integer> levelRecord = new HashMap<>();
+
+    public int widthOfBinaryTree(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        dfs(root, 0, 1);
+        return res_1209;
+    }
+
+    private void dfs(TreeNode root, int depth, int index) {
+        if (root == null) {
+            return;
+        }
+        if (levelRecord.get(depth) == null) {
+            levelRecord.put(depth, index);
+        }
+        res_1209 = Math.max(res_1209, index - levelRecord.get(depth) + 1);
+        dfs(root.left, depth + 1, index * 2 + 1);
+        dfs(root.right, depth + 1, index * 2 + 2);
+    }
 }
