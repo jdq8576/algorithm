@@ -2738,4 +2738,74 @@ public class Solution {
         dfs(root.left, depth + 1, index * 2 + 1);
         dfs(root.right, depth + 1, index * 2 + 2);
     }
+
+    public int Jump(int n, int[] A) {
+        int[] dp = new int[n];
+        dp[0] = 0;
+        if (1 + A[0] >= n) {
+            return 1;
+        }
+        for (int i = 1; i < n; i++) {
+            int start = i - A[i];
+            if (start <= 0) {
+                dp[i] = 1;
+            } else {
+                dp[i] = Integer.MAX_VALUE;
+                for (int j = start; j < i; j++) {
+                    dp[i] = Math.min(dp[j] + 1, dp[i]);
+                }
+            }
+        }
+        return dp[n - 1];
+    }
+
+    public int findShortestPath(int n, int m, int[][] graph) {
+        int[][] map = new int[n + 1][n + 1];
+        for (int i = 1; i < n + 1; i++) {
+            Arrays.fill(map[i], Integer.MAX_VALUE / 2);
+        }
+        for (int[] ints : graph) {
+            final int start = ints[0];
+            final int end = ints[1];
+            final int distance = ints[2];
+            if (map[start][end] == Integer.MAX_VALUE / 2 || map[start][end] > distance) {
+                map[start][end] = distance;
+            }
+        }
+        int[] dis = new int[n + 1];
+        int[] vis = new int[n + 1];
+        Arrays.fill(vis, 0);
+        Arrays.fill(dis, Integer.MAX_VALUE / 2);
+        for (int i = 1; i <= n; i++) {
+            if (map[1][i] != -1) {
+                dis[i] = map[1][i];
+            }
+        }
+        dis[1] = 0;
+        vis[1] = 1;
+        while (vis[n] == 0) {
+            int min = Integer.MAX_VALUE;
+            int index = -1;
+            for (int i = 1; i <= n; i++) {
+                if (vis[i] == 0 && dis[i] < min) {
+                    min = dis[i];
+                    index = i;
+                }
+            }
+            if (index == -1) {
+                break;
+            }
+            vis[index] = 1;
+            for (int i = 1; i <= n; i++) {
+                if (vis[i] == 0 && dis[i] > map[index][i] + dis[index]) {
+                    dis[i] = map[index][i] + dis[index];
+                }
+            }
+        }
+        if (vis[n] == 0) {
+            return -1;
+        } else {
+            return dis[n];
+        }
+    }
 }
